@@ -1,6 +1,10 @@
 package campaign
 
-import "marketplace/internal/contract"
+import (
+	"fmt"
+	"marketplace/internal/contract"
+	internalerror "marketplace/internal/internal_error"
+)
 
 type Service struct {
 	Repository Repository
@@ -14,7 +18,8 @@ func (s *Service) Create(createCampaignDTO contract.CreateCampaignDTO) (string,e
 	
 	err = s.Repository.Save(campaign)
 	if err != nil {
-		return "",err
+		fmt.Println(err)
+		return "",internalerror.RepositoryErr
 	}
 
 	return campaign.ID,nil

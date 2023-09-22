@@ -1,40 +1,52 @@
 package campaign
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
+	"github.com/asaskevich/govalidator"
 	"github.com/rs/xid"
 )
 
 type Contact struct {
-	Email string
+	Email string `validate:"email"`
 }
 
 type Campaign struct {
-	ID        string
-	Name      string
-	CreatedAt time.Time
-	Content   string
-	Contacts  []Contact
+	ID        string    `valid:"required"`
+	Name      string    `valid:"required,alpha,stringlength(4|15)"`
+	CreatedAt time.Time `valid:"required"`
+	Content   string    `valid:"required,alpha"`
+	Contacts  []Contact `valid:"required"`
 }
 
-func NewCampaign(name string, content string, emails []string) (*Campaign,error) {
+func NewCampaign(name string, content string, emails []string) (*Campaign, error) {
 	contacts := make([]Contact, len(emails))
 
-	if name == "" {
-		return nil, errors.New("name is required")
-	}
-
-	for index,email := range emails {
+	for index, email := range emails {
 		contacts[index].Email = email
 	}
 
-	return &Campaign{
-		ID: xid.New().String(),
-		Name: name,
-		Content: content,
+	campaign := &Campaign{
+		ID:        xid.New().String(),
+		Name:      name,
+		Content:   content,
 		CreatedAt: time.Now(),
-		Contacts: contacts,
-	}, nil
+		Contacts:  contacts,
+	}
+	err := campaign.Validate()
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	return campaign, nil
+}
+
+func (c *Campaign) Validate() error {
+	_, err := govalidator.ValidateStruct(c)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

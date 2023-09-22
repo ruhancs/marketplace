@@ -26,5 +26,5 @@ func Test_ValidateNameCampaign(t *testing.T) {
 
 	_, err := campaign.NewCampaign("", "testando", contacts)
 
-	assert.Equal("name is required", err.Error())	
+	assert.NotNil(err)	
 }

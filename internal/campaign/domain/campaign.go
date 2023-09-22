@@ -8,14 +8,14 @@ import (
 )
 
 type Contact struct {
-	Email string `validate:"email"`
+	Email string `valid:"email"`
 }
 
 type Campaign struct {
 	ID        string    `valid:"required"`
 	Name      string    `valid:"required,alpha,stringlength(4|15)"`
 	CreatedAt time.Time `valid:"required"`
-	Content   string    `valid:"required,alpha"`
+	Content   string    `valid:"required"`
 	Contacts  []Contact `valid:"required"`
 }
 

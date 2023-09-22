@@ -24,3 +24,9 @@ func (s *Service) Create(createCampaignDTO contract.CreateCampaignDTO) (string,e
 
 	return campaign.ID,nil
 }
+
+func (s *Service) GetAll() []Campaign {
+	campaigns,_ := s.Repository.GetAll()
+	
+	return campaigns
+}

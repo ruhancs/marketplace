@@ -27,3 +27,10 @@ func (app *Application) CreateCampaign(w http.ResponseWriter, r *http.Request) {
 	render.Status(r, 201)
 	render.JSON(w, r, map[string]string{"id": id})
 }
+
+func (app *Application) GetAllCampaign(w http.ResponseWriter, r *http.Request) {
+	campaigns := app.service.GetAll()
+
+	render.Status(r, 200)
+	render.JSON(w, r, campaigns)
+}

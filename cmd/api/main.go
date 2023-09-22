@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"log"
-	"marketplace/internal/domain/campaign"
+	campaign "marketplace/internal/campaign/domain"
+	"marketplace/internal/campaign/infrastructure/db"
 	"net/http"
 	"time"
 )
@@ -28,7 +29,9 @@ func (app *Application) server() error {
 }
 
 func main() {
-	service := campaign.Service{}
+	service := campaign.Service{
+		Repository: &db.Repository{},
+	}
 	
 	app := Application{
 		service: service,

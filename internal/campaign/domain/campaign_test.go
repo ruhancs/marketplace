@@ -1,7 +1,7 @@
 package campaign_test
 
 import (
-	"marketplace/internal/domain/campaign"
+	campaign "marketplace/internal/campaign/domain"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

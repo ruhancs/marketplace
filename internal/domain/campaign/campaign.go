@@ -1,7 +1,6 @@
 package campaign
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/asaskevich/govalidator"
@@ -36,7 +35,6 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 	}
 	err := campaign.Validate()
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 	return campaign, nil

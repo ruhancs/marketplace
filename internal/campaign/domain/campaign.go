@@ -8,15 +8,26 @@ import (
 )
 
 type Contact struct {
-	Email string `valid:"email"`
+	ID         string `gorm:"size:50"`
+	Email      string `valid:"email" gorm:"size:150"`
+	CampaignID string `gorm:"size:50"`
 }
 
+const (
+	Pending string = "pending"
+	Started string = "started"
+	Done    string = "done"
+	Canceled    string = "canceled"
+
+)
+
 type Campaign struct {
-	ID        string    `valid:"required"`
-	Name      string    `valid:"required,alpha,stringlength(4|15)"`
+	ID        string    `valid:"required" gorm:"size:50"`
+	Name      string    `valid:"required,stringlength(4|15)" gorm:"size:100"`
 	CreatedAt time.Time `valid:"required"`
-	Content   string    `valid:"required"`
+	Content   string    `valid:"required" gorm:"size:1000"`
 	Contacts  []Contact `valid:"required"`
+	Status    string    `valid:"required" gorm:"size:20"`
 }
 
 func NewCampaign(name string, content string, emails []string) (*Campaign, error) {
@@ -24,6 +35,7 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 
 	for index, email := range emails {
 		contacts[index].Email = email
+		contacts[index].ID = xid.New().String()
 	}
 
 	campaign := &Campaign{
@@ -32,12 +44,17 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 		Content:   content,
 		CreatedAt: time.Now(),
 		Contacts:  contacts,
+		Status:    Pending,
 	}
 	err := campaign.Validate()
 	if err != nil {
 		return nil, err
 	}
 	return campaign, nil
+}
+
+func (c *Campaign) Cancel() {
+	c.Status = Canceled
 }
 
 func (c *Campaign) Validate() error {

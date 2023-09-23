@@ -17,6 +17,9 @@ func (app *Application) routes() http.Handler {
 
 	mux.Post("/campaign", app.CreateCampaign)
 	mux.Get("/campaign", app.GetAllCampaign)
+	mux.Get("/campaign/{id}", app.GetCampaignByID)
+	mux.Patch("/campaign/cancel/{id}", app.CancelCampaignByID)
+	mux.Delete("/campaign/{id}", app.DeleteCampaign)
 
 	return mux
 }

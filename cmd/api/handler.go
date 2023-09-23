@@ -6,6 +6,7 @@ import (
 	"marketplace/internal/contract"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
 )
 
@@ -33,4 +34,46 @@ func (app *Application) GetAllCampaign(w http.ResponseWriter, r *http.Request) {
 
 	render.Status(r, 200)
 	render.JSON(w, r, campaigns)
+}
+
+func (app *Application) GetCampaignByID(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	campaign,err := app.service.GetOne(id)
+	if err != nil {
+		fmt.Println(err)
+		render.Status(r, 404)
+		render.JSON(w, r, map[string]string{"error": err.Error()})
+		return
+	}
+
+	render.Status(r, 200)
+	render.JSON(w, r, campaign)
+}
+
+func (app *Application) CancelCampaignByID(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	err := app.service.Cancel(id)
+	if err != nil {
+		fmt.Println(err)
+		render.Status(r, 404)
+		render.JSON(w, r, map[string]string{"error": err.Error()})
+		return
+	}
+
+	render.Status(r, 200)
+	render.JSON(w, r, map[string]string{"status": "campaign canceled"})
+}
+
+func (app *Application) DeleteCampaign(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	err := app.service.Delete(id)
+	if err != nil {
+		fmt.Println(err)
+		render.Status(r, 404)
+		render.JSON(w, r, map[string]string{"error": err.Error()})
+		return
+	}
+
+	render.Status(r, 200)
+	render.JSON(w, r, map[string]string{"status": "campaign deleted"})
 }

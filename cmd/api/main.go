@@ -10,7 +10,7 @@ import (
 )
 
 type Application struct {
-	service campaign.Service
+	service campaign.ServiceInterface
 }
 
 func (app *Application) server() error {
@@ -30,11 +30,13 @@ func (app *Application) server() error {
 
 func main() {
 	service := campaign.Service{
-		Repository: &db.Repository{},
+		Repository: &db.Repository{
+			DB: db.NewDB(),
+		},
 	}
 	
 	app := Application{
-		service: service,
+		service: &service,
 	}
 
 	err := app.server()

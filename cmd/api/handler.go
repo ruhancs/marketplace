@@ -17,6 +17,10 @@ func (app *Application) CreateCampaign(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 		return
 	}
+	//pegar o email do contexto retirado do jwt e informa que o contexto é uma string
+	email := r.Context().Value("email").(string)
+	//inserir o email em req
+	req.CreatedBy = email
 
 	id, err := app.service.Create(req)
 	if err != nil {

@@ -20,7 +20,7 @@ type Service struct {
 }
 
 func (s *Service) Create(createCampaignDTO contract.CreateCampaignDTO) (string, error) {
-	campaign, err := NewCampaign(createCampaignDTO.Name, createCampaignDTO.Content, createCampaignDTO.Emails)
+	campaign, err := NewCampaign(createCampaignDTO.Name, createCampaignDTO.Content, createCampaignDTO.Emails,createCampaignDTO.CreatedBy)
 	if err != nil {
 		return "", err
 	}
@@ -44,7 +44,7 @@ func (s *Service) GetOne(id string) (*contract.OutGetCampaignByID, error) {
 	campaign, err := s.Repository.GetOne(id)
 	if err != nil {
 		fmt.Println(err)
-		return &contract.OutGetCampaignByID{}, err
+		return nil, internalerror.ProccessError(err)
 	}
 
 	output := contract.OutGetCampaignByID{
@@ -52,6 +52,7 @@ func (s *Service) GetOne(id string) (*contract.OutGetCampaignByID, error) {
 		Content:          campaign.Content,
 		Status:           campaign.Status,
 		QuantityContacts: len(campaign.Contacts),
+		CreatedBy: campaign.CreatedBy,
 	}
 
 	return &output, nil
@@ -61,7 +62,7 @@ func (s *Service) Cancel(id string) error {
 	campaign, err := s.Repository.GetOne(id)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return internalerror.ProccessError(err)
 	}
 
 	if campaign.Status != Pending {
@@ -82,7 +83,7 @@ func (s *Service) Delete(id string) error {
 	campaign, err := s.Repository.GetOne(id)
 	if err != nil {
 		fmt.Println(err)
-		return err
+		return internalerror.ProccessError(err)
 	}
 
 	if campaign.Status != Pending {

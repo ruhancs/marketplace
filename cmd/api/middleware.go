@@ -1,12 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
 	"strings"
 
 	oidc "github.com/coreos/go-oidc/v3/oidc"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/render"
 	"github.com/joho/godotenv"
 )
@@ -49,6 +51,15 @@ func (app *Application) Auth(next http.Handler) http.Handler {
 			return
 		}
 
-		next.ServeHTTP(w,r)
+		//pegar o email do token
+		tokenPayload,_ := jwt.Parse(token, nil)
+		claims := tokenPayload.Claims.(jwt.MapClaims)
+		email := claims["email"]
+
+		//inserir o novo valor no contexto da request
+		ctx := context.WithValue(r.Context(), "email", email)
+
+		//inseri o novo contexto nas requisicoes
+		next.ServeHTTP(w,r.WithContext(ctx))
 	})
 }

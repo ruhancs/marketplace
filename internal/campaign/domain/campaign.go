@@ -14,23 +14,23 @@ type Contact struct {
 }
 
 const (
-	Pending string = "pending"
-	Started string = "started"
-	Done    string = "done"
-	Canceled    string = "canceled"
-
+	Pending  string = "pending"
+	Started  string = "started"
+	Done     string = "done"
+	Canceled string = "canceled"
 )
 
 type Campaign struct {
 	ID        string    `valid:"required" gorm:"size:50"`
 	Name      string    `valid:"required,stringlength(4|15)" gorm:"size:100"`
+	CreatedBy string    `gorm:"size:100"`
 	CreatedAt time.Time `valid:"required"`
 	Content   string    `valid:"required" gorm:"size:1000"`
 	Contacts  []Contact `valid:"required"`
 	Status    string    `valid:"required" gorm:"size:20"`
 }
 
-func NewCampaign(name string, content string, emails []string) (*Campaign, error) {
+func NewCampaign(name string, content string, emails []string, createdBy string) (*Campaign, error) {
 	contacts := make([]Contact, len(emails))
 
 	for index, email := range emails {
@@ -41,6 +41,7 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 	campaign := &Campaign{
 		ID:        xid.New().String(),
 		Name:      name,
+		CreatedBy: createdBy,
 		Content:   content,
 		CreatedAt: time.Now(),
 		Contacts:  contacts,

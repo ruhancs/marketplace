@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -10,14 +9,9 @@ import (
 	oidc "github.com/coreos/go-oidc/v3/oidc"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/render"
-	"github.com/joho/godotenv"
 )
 
 func (app *Application) Auth(next http.Handler) http.Handler {
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error loading .env")
-	}
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		authorizationHeader := r.Header.Get("Authorization")
 		if authorizationHeader == "" {

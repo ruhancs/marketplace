@@ -16,13 +16,15 @@ func (app *Application) routes() http.Handler {
 	mux.Use(middleware.Recoverer)
 
 	//proteger rotas com auth
-	mux.Use(app.Auth)
+	mux.Route("/campaign", func(r chi.Router) {
+		mux.Use(app.Auth)
+		mux.Post("/", app.CreateCampaign)
+		mux.Patch("/cancel/{id}", app.CancelCampaignByID)
+		mux.Delete("/{id}", app.DeleteCampaign)
+	})
 
-	mux.Post("/campaign", app.CreateCampaign)
 	mux.Get("/campaign", app.GetAllCampaign)
 	mux.Get("/campaign/{id}", app.GetCampaignByID)
-	mux.Patch("/campaign/cancel/{id}", app.CancelCampaignByID)
-	mux.Delete("/campaign/{id}", app.DeleteCampaign)
 
 	return mux
 }

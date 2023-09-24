@@ -5,8 +5,11 @@ import (
 	"log"
 	campaign "marketplace/internal/campaign/domain"
 	"marketplace/internal/campaign/infrastructure/db"
+	infra_mail "marketplace/internal/campaign/infrastructure/mail"
 	"net/http"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type Application struct {
@@ -29,17 +32,22 @@ func (app *Application) server() error {
 }
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		fmt.Println("Error loading .env")
+	}
 	service := campaign.Service{
 		Repository: &db.Repository{
 			DB: db.NewDB(),
 		},
+		SendMail: infra_mail.SendMail,
 	}
 	
 	app := Application{
 		service: &service,
 	}
 
-	err := app.server()
+	err = app.server()
 	if err != nil {
 		log.Fatal(err)
 	}

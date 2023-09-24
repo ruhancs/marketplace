@@ -152,6 +152,22 @@ func Test_CampaignDoesNotBeDeleted(t *testing.T) {
 	assert.Equal("campaign does not be canceled", err.Error())
 }
 
+func Test_Start_RecorNotFoundError(t *testing.T) {
+	assert := assert.New(t)
+
+	repository := new(repositoryMock)
+	//campaign,_ := NewCampaign("test","testing",[]string{"test@email.com"})
+	repository.On("GetOne", mock.Anything).Return(nil, errors.New("camapign not found"))
+
+	service := Service{
+		Repository: repository,
+	}
+
+	err := service.Start("iquwerbj236")
+
+	assert.NotNil(err)
+}
+
 func Test_CampaignRepository(t *testing.T) {
 
 	createCampaignDTO := contract.CreateCampaignDTO{

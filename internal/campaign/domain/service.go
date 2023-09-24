@@ -13,10 +13,12 @@ type ServiceInterface interface {
 	GetOne(id string) (*contract.OutGetCampaignByID, error)
 	Cancel(id string) error
 	Delete(id string) error
+	Start(id string) error
 }
 
 type Service struct {
 	Repository Repository
+	SendMail func(*Campaign) error
 }
 
 func (s *Service) Create(createCampaignDTO contract.CreateCampaignDTO) (string, error) {
@@ -96,5 +98,32 @@ func (s *Service) Delete(id string) error {
 		return err
 	}
 
+	return nil
+}
+
+func (s *Service) Start(id string) error {
+	campaign,err := s.Repository.GetOne(id)
+	if err != nil {
+		fmt.Println(err)
+		return internalerror.ProccessError(err)
+	}
+
+	if campaign.Status != Pending {
+		return errors.New("campaign does not be started")
+	}
+
+	
+	err = s.SendMail(campaign)
+	if err != nil {
+		return errors.New("error to send emails")
+	}
+	
+	campaign.Done()
+	err = s.Repository.Update(campaign)
+	if err != nil {
+		fmt.Println(err)
+		return internalerror.ProccessError(err)
+	}
+	
 	return nil
 }

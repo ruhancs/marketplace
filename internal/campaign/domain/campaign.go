@@ -58,6 +58,14 @@ func (c *Campaign) Cancel() {
 	c.Status = Canceled
 }
 
+func (c *Campaign) Start() {
+	c.Status = Started
+}
+
+func (c *Campaign) Done() {
+	c.Status = Done
+}
+
 func (c *Campaign) Validate() error {
 	_, err := govalidator.ValidateStruct(c)
 	if err != nil {

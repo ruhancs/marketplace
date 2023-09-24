@@ -15,6 +15,9 @@ func (app *Application) routes() http.Handler {
 	mux.Use(middleware.Logger)
 	mux.Use(middleware.Recoverer)
 
+	//proteger rotas com auth
+	mux.Use(app.Auth)
+
 	mux.Post("/campaign", app.CreateCampaign)
 	mux.Get("/campaign", app.GetAllCampaign)
 	mux.Get("/campaign/{id}", app.GetCampaignByID)
